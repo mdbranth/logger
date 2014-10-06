@@ -14,7 +14,7 @@ ajaxlogger.init('https://localhost/api/path/to/log/to');
 for using the generic logger initialize with:
 
 ```
-logger.init(function writeFunction(text, done));
+logger.init(function writeFunction(object, done));
 ```
 
 Other Options:

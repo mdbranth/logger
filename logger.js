@@ -84,6 +84,7 @@ function flushQueue() {
   pendingRequest = true;
 
   function onDone(err) {
+    pendingRequest = false;
     if (err) return _onErr && _onErr();
     if (needsFlush) flushQueue();
   }

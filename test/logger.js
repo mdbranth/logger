@@ -35,7 +35,7 @@ describe('Basic Logger', function(){
 
       setTimeout(function() {
         assert.equal(1, logCalls.length);
-        var data = JSON.parse(logCalls[0]);
+        var data = logCalls[0];
         var logs = data.logs;
         assert.equal(4, logs.length);
         assert.equal(JSON.stringify(log1), JSON.stringify(logs[0].log));

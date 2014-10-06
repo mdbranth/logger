@@ -72,15 +72,15 @@ function flushQueue() {
     return;
   }
   
-  var logText = JSON.stringify({
+  var object = {
     date: Date.now(),
     logs: queue
-  });
+  };
 
   needsFlush = false;
   queue = [];
 
-  _writeLogFunction(logText, onDone);
+  _writeLogFunction(object, onDone);
   pendingRequest = true;
 
   function onDone(err) {

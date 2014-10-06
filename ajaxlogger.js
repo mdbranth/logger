@@ -12,7 +12,7 @@ function init(new$, newApiPath) {
   return logger;
 }
 
-function writeLog(text, done) {
+function writeLog(object, done) {
   var options = {
     url: _apiPath,
     dataType: 'json',
@@ -20,7 +20,7 @@ function writeLog(text, done) {
     success: onSuccess,
     type: 'POST',
     contentType: 'application/json; charset=utf-8',
-    data: text
+    data: JSON.stringify(object)
   };
 
   $.ajax(options);

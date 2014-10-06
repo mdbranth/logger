@@ -1,17 +1,24 @@
 # About
-This module is designed to be used for logging to the server in a client side web app. The app queues up log messages to reduce the number of network calls.
+This module is designed to be used for logging in batches.
+There is a submodule called ajaxlogger that will use the logger queuing to log to a server
 
 # Usage
-The module needs to be initialized with jquery.
-additional options:
+if you are using logger.js directly then logger needs to be initialized with a function that actually saves the logs. If you are using a server then using logger/ajaxlogger will take care of this for you.
+
+To initialize the modules, for ajaxlogger call
+
+```
+ajaxlogger.init('https://localhost/api/path/to/log/to');
+```
+
+for using the generic logger initialize with:
+
+```
+logger.init(function writeFunction(text, done));
+```
+
+Other Options:
 - ttl: time until queue is flushed
-- apiPath: path where log calls are made
-
-To initialize the module make a call like the following once:
-
-```
-log.init(window.$).ttl(2000).apiPath('https://localhost/api/log');
-```
 
 Then to log you can log with any object:
 
@@ -19,8 +26,14 @@ Then to log you can log with any object:
 log({action: 'login', userId: '11111'});
 ```
 
-Logs in the queue are stored as objects with the client side date the log method was called and the stringified json of the log message.
+chaining is allowed:
 
-The server will get a call with the client side date the call was made and an array of log objects as mentioned above. The dates allow the server to determine the offset of when the log method was called.
+```
+log({test: '1'}).error({test: '2'}).warn({test: '3'});
+```
 
-There is also a method to get and clear the log queue. This is designed so that other api calls can grab the log queue and have the logs piggyback on the network call to furthur reduce network calls.
+Logs in the queue are stored as objects with the date the log method was called and the object of the log message.
+
+The writeLogFunction will also be called with the date the call was made and an array of log objects as mentioned above. The dates allow the server to determine the offset of when the log method was called (in cases where the write is happening on a server).
+
+There is also a method to get and clear the log queue. This is designed so that in the case of ajaxlogger other api calls can grab the log queue and have the logs piggyback on the network call to furthur reduce network calls.

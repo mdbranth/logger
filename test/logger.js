@@ -1,27 +1,21 @@
 var assert = require('assert')
-var log = require('../logger')
+var log = require('../ajaxlogger')
 
-var calledOptions = [];
+var logCalls = [];
 
-function mockJQuery () {
-  return mockJQuery;
+function writeLog(text, done) {
+  logCalls.push(text);
+  return done();
 }
 
-mockJQuery.ajax = ajax;
-mockJQuery.reset = resetMockJQuery;
-
-function ajax(options) {
-  calledOptions.push(options);
+function resetLogs() {
+  logCalls = [];
 }
 
-function resetMockJQuery() {
-  calledOptions = [];
-}
-
-describe('Logger', function(){
+describe('Basic Logger', function(){
   describe('Basic Log', function(){
     var apiPath = 'https://localhost/test/api/log';
-    log.init(mockJQuery).ttl('50').apiPath(apiPath);
+    log.init(writeLog).ttl('50');
 
     var log1 = {
       value: 'test'
@@ -40,10 +34,8 @@ describe('Logger', function(){
       log(log1).log(log2).error(error1).warn(warn1);
 
       setTimeout(function() {
-        assert.equal(1, calledOptions.length);
-        var options = calledOptions[0];
-        assert.equal(apiPath, options.url);
-        var data = JSON.parse(options.data);
+        assert.equal(1, logCalls.length);
+        var data = JSON.parse(logCalls[0]);
         var logs = data.logs;
         assert.equal(4, logs.length);
         assert.equal(JSON.stringify(log1), JSON.stringify(logs[0].log));
@@ -55,12 +47,12 @@ describe('Logger', function(){
     });
 
     it('should not call api if getAndClearQueue', function(done) {
-      mockJQuery().reset();
+      resetLogs();
       log(log1).log(log2);
       var queue = log.getAndClearQueue();
       assert.equal(2, queue.length);
       setTimeout(function() {
-        assert.equal(0, calledOptions.length);
+        assert.equal(0, logCalls.length);
         done();
       }, 100);
     });

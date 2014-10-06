@@ -5,25 +5,18 @@ log.error = error;
 log.warn = warn;
 log.init = init;
 log.ttl = ttl;
-log.apiPath = apiPath;
 log.onError = onError;
 log.getAndClearQueue = getAndClearQueue;
 
-var $ = typeof window !== 'undefined' && window.$ || {};
-function init(new$) {
-  $ = new$;
+var _writeLogFunction = function(done) {};
+function init(writeLogFunction) {
+  _writeLogFunction = writeLogFunction;
   return log;
 }
 
 var _ttl = 2000;
 function ttl(newTtl) {
   _ttl = newTtl;
-  return log;
-}
-
-var _apiPath = '/api/log';
-function apiPath(newApiPath) {
-  _apiPath = newApiPath;
   return log;
 }
 
@@ -70,36 +63,29 @@ function _log(object, logType) {
 }
 
 var needsFlush = false;
-var pendingRequest = null;
+var pendingRequest = false;
 function flushQueue() {
   if (!queue.length) return;
-  var options = {
-    url: _apiPath,
-    dataType: 'json',
-    error: onError,
-    success: onSuccess,
-    type: 'POST',
-    contentType: 'application/json; charset=utf-8',
-    data: JSON.stringify({
-        date: Date.now(),
-        logs: queue
-      })
-  };
+
   if (pendingRequest) {
     needsFlush = true;
     return;
   }
+  
+  var logText = JSON.stringify({
+    date: Date.now(),
+    logs: queue
+  });
+
   needsFlush = false;
   queue = [];
-  pendingRequest = $.ajax(options);
 
-  function onSuccess() {
-    pendingRequest = null;
+  _writeLogFunction(logText, onDone);
+  pendingRequest = true;
+
+  function onDone(err) {
+    if (err) return _onErr && _onErr();
     if (needsFlush) flushQueue();
-  }
-
-  function onError() {
-    if (_onErr) return _onErr();
   }
 }
 

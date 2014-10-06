@@ -1,6 +1,8 @@
 module.exports = log;
 
 log.log = log;
+log.error = error;
+log.warn = warn;
 log.init = init;
 log.ttl = ttl;
 log.apiPath = apiPath;
@@ -31,13 +33,32 @@ function onError(onErr) {
   return log;
 }
 
+function warn(object) {
+  return _log(object, 'warn');
+}
+
+function error(object) {
+  return _log(object, 'error');
+}
+
+function log(object) {
+  return _log(object, 'log');
+}
+
+function getAndClearQueue() {
+  if (timeout) clearTimeout(timeout);
+  var result = queue;
+  queue = [];
+  return result;
+}
+
 var queue = [];
 var timeout;
-function log(object) {
+function _log(object, logType) {
   var queueObject = {
-    json: JSON.stringify(object),
-    date: new Date()
+    date: Date.now()
   };
+  queueObject[logType] = JSON.parse(JSON.stringify(object));
 
   queue.push(queueObject);
 
@@ -48,31 +69,37 @@ function log(object) {
   return log;
 }
 
-function getAndClearQueue() {
-  if (timeout) clearTimeout(timeout);
-  var result = queue;
-  queue = [];
-  return result;
-}
-
+var needsFlush = false;
+var pendingRequest = null;
 function flushQueue() {
   if (!queue.length) return;
   var options = {
     url: _apiPath,
     dataType: 'json',
-    error: _onErr || function() {},
+    error: onError,
     success: onSuccess,
     type: 'POST',
     contentType: 'application/json; charset=utf-8',
     data: JSON.stringify({
-        date: new Date(),
+        date: Date.now(),
         logs: queue
       })
   };
+  if (pendingRequest) {
+    needsFlush = true;
+    return;
+  }
+  needsFlush = false;
   queue = [];
-  $.ajax(options);
+  pendingRequest = $.ajax(options);
 
   function onSuccess() {
+    pendingRequest = null;
+    if (needsFlush) flushQueue();
+  }
+
+  function onError() {
+    if (_onErr) return _onErr();
   }
 }
 

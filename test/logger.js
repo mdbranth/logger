@@ -29,9 +29,15 @@ describe('Logger', function(){
     var log2 = {
       test: 'test1'
     };
+    var error1 = {
+      value: 'error1'
+    };
+    var warn1 = {
+      value: 'warn1'
+    };
 
     it('should call log api once', function(done) {
-      log(log1).log(log2);
+      log(log1).log(log2).error(error1).warn(warn1);
 
       setTimeout(function() {
         assert.equal(1, calledOptions.length);
@@ -39,9 +45,11 @@ describe('Logger', function(){
         assert.equal(apiPath, options.url);
         var data = JSON.parse(options.data);
         var logs = data.logs;
-        assert.equal(2, logs.length);
-        assert.equal(JSON.stringify(log1), logs[0].json);
-        assert.equal(JSON.stringify(log2), logs[1].json);
+        assert.equal(4, logs.length);
+        assert.equal(JSON.stringify(log1), JSON.stringify(logs[0].log));
+        assert.equal(JSON.stringify(log2), JSON.stringify(logs[1].log));
+        assert.equal(JSON.stringify(error1), JSON.stringify(logs[2].error));
+        assert.equal(JSON.stringify(warn1), JSON.stringify(logs[3].warn));
         done();
       }, 100);
     });

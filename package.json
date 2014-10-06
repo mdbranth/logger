@@ -1,0 +1,22 @@
+{
+  "name": "logger",
+  "version": "0.0.0",
+  "description": "This module is designed to be used for logging to the server in a client side web app. The app queues up log messages to reduce the number of network calls.",
+  "main": "logger.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mdbranth/logger.git"
+  },
+  "author": "Matthew Branthwaite",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mdbranth/logger/issues"
+  },
+  "homepage": "https://github.com/mdbranth/logger"
+}

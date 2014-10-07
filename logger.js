@@ -7,6 +7,8 @@ log.init = init;
 log.ttl = ttl;
 log.onError = onError;
 log.getAndClearQueue = getAndClearQueue;
+log.flush = forceQueueFlush;
+
 
 var _writeLogFunction = function(done) {};
 function init(writeLogFunction) {
@@ -36,6 +38,12 @@ function error(object) {
 
 function log(object) {
   return _log(object, 'log');
+}
+
+function forceQueueFlush() {
+  if (timeout) clearTimeout(timeout);
+  flushQueue();
+  return log;
 }
 
 function getAndClearQueue() {

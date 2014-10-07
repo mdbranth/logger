@@ -65,5 +65,16 @@ describe('Basic Logger', function(){
         done();
       }, 100);
     });
+
+    it('should be able to force queue flush', function(done) {
+      resetLogs();
+      log(log1).log(log2).flush();
+      assert.equal(1, logCalls.length);
+      resetLogs();
+      setTimeout(function() {
+        assert.equal(0, logCalls.length);
+        done();
+      }, 100);
+    });
   })
 });

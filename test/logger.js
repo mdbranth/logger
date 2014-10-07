@@ -46,6 +46,15 @@ describe('Basic Logger', function(){
       }, 100);
     });
 
+    it('should be able to log a second time', function(done) {
+      resetLogs();
+      log(log1);
+      setTimeout(function() {
+        assert.equal(1, logCalls.length);
+        done();
+      }, 100);
+    }); 
+
     it('should not call api if getAndClearQueue', function(done) {
       resetLogs();
       log(log1).log(log2);

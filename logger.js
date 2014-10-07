@@ -80,8 +80,8 @@ function flushQueue() {
   needsFlush = false;
   queue = [];
 
-  _writeLogFunction(object, onDone);
   pendingRequest = true;
+  _writeLogFunction(object, onDone);
 
   function onDone(err) {
     pendingRequest = false;

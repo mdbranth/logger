@@ -20,7 +20,7 @@ function writeLog(object, done) {
     success: onSuccess,
     type: 'POST',
     contentType: 'application/json; charset=utf-8',
-    data: JSON.stringify(object)
+    data: JSON.stringify({log: object})
   };
 
   $.ajax(options);

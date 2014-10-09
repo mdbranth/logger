@@ -5,6 +5,7 @@ log.error = error;
 log.warn = warn;
 log.init = init;
 log.ttl = ttl;
+log.maxEntries = maxEntries;
 log.onError = onError;
 log.getAndClearQueue = getAndClearQueue;
 log.flush = forceQueueFlush;
@@ -19,6 +20,12 @@ function init(writeLogFunction) {
 var _ttl = 2000;
 function ttl(newTtl) {
   _ttl = newTtl;
+  return log;
+}
+
+var _maxEntries = 100;
+function maxEntries(newMaxEntries) {
+  _maxEntries = maxEntries;
   return log;
 }
 
@@ -68,6 +75,10 @@ function _log(object, logType) {
 
   if (queue.length == 1) {
     timeout = setTimeout(flushQueue, _ttl);
+  }
+
+  if (queue.length > _maxEntries) {
+    forceQueueFlush();
   }
 
   return log;

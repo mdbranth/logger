@@ -9,6 +9,7 @@ function init(new$, newApiPath) {
   $ = new$;
   logger.init(writeLog);
   if (newApiPath) _apiPath = newApiPath;
+  $.ajaxSend(ajaxHandler);
   return logger;
 }
 
@@ -31,6 +32,15 @@ function writeLog(object, done) {
 
   function onSuccess() {
     done();
+  }
+}
+
+function ajaxHandler(event, jqXHR, ajaxOptions) {
+  if (ajaxOptions.url !== _apiPath) {
+    var newData = JSON.parse(ajaxOptions.data);
+    newData.log = logger.getAndClearQueue();
+
+    ajaxOptions.data = JSON.stringify(newData);
   }
 }
 

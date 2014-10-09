@@ -1,5 +1,5 @@
 var assert = require('assert')
-var log = require('../ajaxlogger')
+var log = require('../logger')
 
 var logCalls = [];
 
@@ -14,7 +14,6 @@ function resetLogs() {
 
 describe('Basic Logger', function(){
   describe('Basic Log', function(){
-    var apiPath = 'https://localhost/test/api/log';
     log.init(writeLog).ttl('50');
 
     var log1 = {
@@ -58,7 +57,7 @@ describe('Basic Logger', function(){
     it('should not call api if getAndClearQueue', function(done) {
       resetLogs();
       log(log1).log(log2);
-      var queue = log.getAndClearQueue();
+      var queue = log.getAndClearQueue().logs;
       assert.equal(2, queue.length);
       setTimeout(function() {
         assert.equal(0, logCalls.length);

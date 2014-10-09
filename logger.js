@@ -48,7 +48,10 @@ function forceQueueFlush() {
 
 function getAndClearQueue() {
   if (timeout) clearTimeout(timeout);
-  var result = queue;
+  var result = {
+    date: Date.now(),
+    logs: queue
+  };
   queue = [];
   return result;
 }

@@ -115,7 +115,7 @@ function flushQueue() {
 
   function onDone(err) {
     pendingRequest = false;
-    if (err) return _onErr && _onErr();
+    if (err) return _onErr && _onErr(err);
     if (needsFlush) flushQueue();
   }
 }

@@ -5,6 +5,7 @@ log.error = error;
 log.warn = warn;
 log.init = init;
 log.ttl = ttl;
+log.append = append;
 log.maxEntries = maxEntries;
 log.onError = onError;
 log.getAndClearQueue = getAndClearQueue;
@@ -82,6 +83,13 @@ function _log(object, logType) {
   }
 
   return log;
+}
+
+function append(logs) {
+  queue = queue.concat(logs);
+  if (queue.length > _maxEntries) {
+    forceQueueFlush();
+  }
 }
 
 var needsFlush = false;
